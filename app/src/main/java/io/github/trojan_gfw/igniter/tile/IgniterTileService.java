@@ -18,7 +18,7 @@ import io.github.trojan_gfw.igniter.proxy.aidl.ITrojanService;
 
 /**
  * Igniter's implementation of TileService, showing current state of {@link ProxyService} and providing a
- * shortcut to start or stop {@link ProxyService} by the help of {@link ProxyControlActivity}. This
+ * shortcut to start or stop {@link ProxyService} by the help of {@link ProxyHelper}. This
  * service receives state change by the help of {@link TrojanConnection}.
  *
  * @see ProxyService
@@ -139,7 +139,8 @@ public class IgniterTileService extends TileService implements TrojanConnection.
                 @ProxyService.ProxyState int state = service.getState();
                 switch (state) {
                     case ProxyService.STARTED: {
-                        startActivity(ProxyControlActivity.startOrStopProxy(this, false, false));
+                        ProxyHelper.stopProxyService(this);
+//                        startActivity(ProxyControlActivity.startOrStopProxy(this, false, false));
                         break;
                     }
                     case ProxyService.STARTING:
@@ -147,7 +148,9 @@ public class IgniterTileService extends TileService implements TrojanConnection.
                         break;
                     case ProxyService.STATE_NONE:
                     case ProxyService.STOPPED: {
-                        startActivity(ProxyControlActivity.startOrStopProxy(this, true, false));
+                        LogHelper.i(TAG, "start proxy control Activity");
+                        ProxyHelper.startProxyService(this);
+//                        startActivity(ProxyControlActivity.startOrStopProxy(this, true, false));
                         break;
                     }
                     default:

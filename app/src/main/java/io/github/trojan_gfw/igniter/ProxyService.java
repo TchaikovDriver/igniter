@@ -19,6 +19,7 @@ import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.support.annotation.IntDef;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 
 import org.json.JSONObject;
 
@@ -41,7 +42,7 @@ import tun2socks.Tun2socksStartOptions;
  * test connection and state change. You should call {@link #startForegroundService(Intent)} to start
  * this service and send broadcast with action {@link R.string#stop_service} to shutdown the service.
  * It's recommended to start this service by the help
- * of {@link io.github.trojan_gfw.igniter.tile.ProxyControlActivity}.
+ * of {@link io.github.trojan_gfw.igniter.tile.ProxyHelper}.
  * <br/>
  * If you want to interact withthe service, you should call {@link #bindService(Intent, ServiceConnection, int)}
  * with the action {@link R.string#bind_service}. Then {@link ProxyService} will return a binder
@@ -140,7 +141,7 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
     @Override
     public void onCreate() {
         super.onCreate();
-        LogHelper.i(TAG, "onCreate");
+        LogHelper.i(TAG, "Igniter Proxy Service onCreate");
         IntentFilter filter = new IntentFilter();
         filter.addAction(getString(R.string.stop_service));
         registerReceiver(mStopBroadcastReceiver, filter);
@@ -241,7 +242,7 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        LogHelper.i(TAG, "onStartCommand");
+        LogHelper.i(TAG, "Igniter Proxy Service onStartCommand");
         // In order to keep the service long-lived, starting the service by Context.startForegroundService()
         // might be the easiest way. According to the official indication, a service which is started
         // by Context.startForegroundService() must call Service.startForeground() within 5 seconds.
@@ -363,10 +364,14 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
 
         Tun2socks.setLoglevel("info");
         if (enable_clash) {
-            tun2socksStartOptions.setFakeIPRange("255.0.128.1/20");
+            tun2socksStartOptions.setFakeIPStart("255.0.128.1");
+            tun2socksStartOptions.setFakeIPStop("255.0.143.254");
+//            tun2socksStartOptions.setFakeIPRange("255.0.128.1/20");
         } else {
             // Disable go-tun2socks fake ip
-            tun2socksStartOptions.setFakeIPRange("");
+            tun2socksStartOptions.setFakeIPStart("");
+            tun2socksStartOptions.setFakeIPStop("");
+//            tun2socksStartOptions.setFakeIPRange("");
         }
         Tun2socks.start(tun2socksStartOptions);
         LogHelper.i(TAG, tun2socksStartOptions.toString());
@@ -419,8 +424,11 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
         stopSelf();
 
         setState(STOPPED);
+        LogHelper.i(TAG, "Igniter proxy service ready to stop foreground");
         stopForeground(true);
+        LogHelper.i(TAG, "Igniter proxy service stopped foreground");
         destroyNotificationChannel(getString(R.string.notification_channel_id));
+        LogHelper.i(TAG, "Igniter proxy service destroy notification channel");
     }
 
     private void createNotificationChannel(String channelId) {
@@ -442,6 +450,7 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
     public void stop() {
         shutdown();
         // this is essential for gomobile aar
+        LogHelper.i(TAG, "Igniter proxy service ready to kill process");
         android.os.Process.killProcess(android.os.Process.myPid());
     }
 }
