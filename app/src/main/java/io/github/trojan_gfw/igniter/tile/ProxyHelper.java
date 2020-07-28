@@ -40,7 +40,9 @@ public abstract class ProxyHelper {
     }
 
     public static void startProxyService(Context context) {
-        ContextCompat.startForegroundService(context, new Intent(context, ProxyService.class));
+        Intent intent = new Intent(context, ProxyService.class);
+        intent.putExtra(ProxyService.PARAM_START, "true");
+        ContextCompat.startForegroundService(context, intent);
     }
 
     public static void startLauncherActivity(Context context) {

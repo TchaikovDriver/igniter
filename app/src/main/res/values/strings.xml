@@ -110,4 +110,6 @@
     <string name="proxy_service_not_connected">ProxyService not yet connected.</string>
     <string name="export_server_list_success">Export Config Success</string>
     <string name="export_server_list_error">Export Config Error</string>
+
+    <string name="tasker_plugin_name" translatable="false">Igniter Plugin</string>
 </resources>

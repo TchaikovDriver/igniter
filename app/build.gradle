@@ -25,6 +25,14 @@ private String GenerateVersionName() {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\LiuYujie\\keystore.jks')
+            storePassword 'mt123456'
+            keyPassword 'mt123456'
+            keyAlias 'key0'
+        }
+    }
     ndkVersion "21.3.6528147"
     compileSdkVersion project.ext.targetSdkVersion
 
@@ -39,15 +47,16 @@ android {
         versionCode GenerateVersionCode()
         versionName GenerateVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
+        /*ndk {
             abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
-        }
+        }*/
         externalNativeBuild {
             cmake {
                 arguments "-DANDROID_CPP_FEATURES=rtti exceptions"
             }
         }
         archivesBaseName = "$applicationId-v$versionName-$versionCode"
+        signingConfig signingConfigs.release
     }
     buildTypes {
         debug {
@@ -68,6 +77,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include "x86", "x86_64", "arm64-v8a", "armeabi-v7a"
+            universalApk false
+        }
+    }
 }
 
 repositories {
@@ -84,6 +101,7 @@ dependencies {
     implementation 'androidx.core:core:1.5.0-alpha01'
     implementation 'cn.bingoogolapple:bga-qrcode-zxing:1.3.7'
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.twofortyfouram:android-plugin-client-sdk-for-locale:4.0.3'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2-rc01'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0-rc01'

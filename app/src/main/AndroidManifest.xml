@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application xmlns:tools="http://schemas.android.com/tools"
         android:name=".IgniterApplication"
@@ -15,11 +16,61 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".tasker.TaskerPluginService"
+            android:process=":plugin"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <receiver
+            android:name=".tasker.TaskerPluginFireReceiver"
+            android:enabled="true"
+            android:process=":plugin"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.FIRE_SETTING" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".tasker.QueryReceiver"
+            android:enabled="true"
+            android:process=":plugin"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.QUERY_CONDITION" />
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".tasker.TaskerEditActivity"
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="Igniter Plugin Edit">
+            <intent-filter>
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_CONDITION" />
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity>
+
+        <activity-alias
+            android:name=".ui.activity.PluginActivity"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_round"
+            android:label="Igniter Plugin Alias"
+            android:targetActivity=".tasker.TaskerEditActivity">
+            <intent-filter>
+
+                <!-- For a plug-in setting, use EDIT_SETTING instead. -->
+                <!-- <action android:name="com.twofortyfouram.locale.intent.action.EDIT_CONDITION" /> -->
+                <action android:name="com.twofortyfouram.locale.intent.action.EDIT_SETTING" />
+            </intent-filter>
+        </activity-alias>
+
         <provider
             android:name=".common.os.PreferencesProvider"
             android:authorities="${applicationId}"
             android:enabled="true"
             android:exported="false" />
+
         <activity
             android:name=".AboutActivity"
             android:label="@string/title_activity_about" />

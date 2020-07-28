@@ -62,6 +62,7 @@ import tun2socks.Tun2socksStartOptions;
  */
 public class ProxyService extends VpnService implements TestConnection.OnResultListener {
     private static final String TAG = "ProxyService";
+    public static final String PARAM_START = "start";
     public static final int STATE_NONE = -1;
     public static final int STARTING = 0;
     public static final int STARTED = 1;
@@ -300,6 +301,9 @@ public class ProxyService extends VpnService implements TestConnection.OnResultL
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         LogHelper.i(TAG, "onStartCommand");
+        if (!"true".equals(intent.getStringExtra(PARAM_START))) {
+            return START_NOT_STICKY;
+        }
         // In order to keep the service long-lived, starting the service by Context.startForegroundService()
         // might be the easiest way. According to the official indication, a service which is started
         // by Context.startForegroundService() must call Service.startForeground() within 5 seconds.
