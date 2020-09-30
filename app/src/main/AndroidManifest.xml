@@ -68,6 +68,13 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+        <receiver android:name=".appwidget.IgniterAppWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidiget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/igniter_appwidget_info" />
+        </receiver>
     </application>
 
 </manifest>
